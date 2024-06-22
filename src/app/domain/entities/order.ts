@@ -6,7 +6,7 @@ interface OrderItem {
   quantity: number;
 }
 
-interface OrderDetails {
+interface IOrder {
   id: string;
   customerId: string;
   subtotal: number;
@@ -16,14 +16,14 @@ interface OrderDetails {
   updatedAt: Date;
 }
 
-export class Order implements OrderDetails {
+export class Order implements IOrder {
   readonly id: string;
   readonly customerId: string;
   readonly subtotal: number;
   readonly orderItems: OrderItem[];
-  status: "created" | "cancelled" | "refunded";
   readonly createdAt: Date;
   updatedAt: Date;
+  status;
 
   constructor(
     id: string,
