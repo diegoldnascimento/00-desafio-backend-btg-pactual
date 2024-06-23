@@ -1,0 +1,3 @@
+interface MessagingQueueService {
+  produce: any
+}

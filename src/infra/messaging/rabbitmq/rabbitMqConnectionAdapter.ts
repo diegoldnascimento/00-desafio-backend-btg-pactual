@@ -5,7 +5,7 @@ const rmqPass = process.env.RABBIT_MQ_PASSWORD;
 const rmqHost = process.env.RABBIT_MQ_HOSTNAME;
 const rmqQueue = process.env.RABBIT_MQ_ORDER_V1_QUEUE_CREATED || "";
 
-export class RabbitMQConnectionAdapter {
+export class RabbitMQConnectionAdapter implements MessagingQueueService {
   connection!: Connection;
   channel!: Channel;
   private connected!: Boolean;

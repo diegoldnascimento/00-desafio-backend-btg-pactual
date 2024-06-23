@@ -1,17 +1,20 @@
 import { Order } from "./order";
 
-const createOrder = (
-  customerId: string,
-  orderItems: { product: string; price: number; quantity: number }[],
-) => {
-  const order = Order.create(customerId, orderItems);
+interface SutOptions {
+  orderId: string;
+  customerId: string;
+  orderItems: { product: string; price: number; quantity: number }[];
+}
+
+const makeSut = ({ orderId, customerId, orderItems }: SutOptions) => {
+  const order = Order.create(orderId, customerId, orderItems);
   return { order };
 };
-
 describe("Order", () => {
   describe("create", () => {
     it("should create a valid order when the correct value is provided", () => {
       const validCustomerId = "123";
+      const validOrderId = "1001";
       const validOrderItems = [
         {
           product: "new Product",
@@ -20,9 +23,14 @@ describe("Order", () => {
         },
       ];
 
-      const { order } = createOrder(validCustomerId, validOrderItems);
+      const { order } = makeSut({
+        orderId: validOrderId,
+        customerId: validCustomerId,
+        orderItems: validOrderItems,
+      });
 
       expect(order.id).toBeDefined();
+      expect(order.orderId).toBe(validOrderId); // Check orderId
       expect(order.customerId).toBe(validCustomerId);
       expect(order.orderItems).toEqual(validOrderItems);
       expect(order.status).toBe("created");
@@ -39,18 +47,26 @@ describe("Order", () => {
         },
       ];
 
-      expect(() => createOrder(invalidCustomerId, validOrderItems)).toThrow(
-        new Error("Customer ID must have a valid value"),
-      );
+      expect(() =>
+        makeSut({
+          orderId: "1001",
+          customerId: invalidCustomerId,
+          orderItems: validOrderItems,
+        }),
+      ).toThrow(new Error("Customer ID must have a valid value"));
     });
 
     it("should throw an error when order items are empty", () => {
       const validCustomerId = "123";
       const emptyOrderItems = [] as never;
 
-      expect(() => createOrder(validCustomerId, emptyOrderItems)).toThrow(
-        new Error("Order Items cannot be empty"),
-      );
+      expect(() =>
+        makeSut({
+          orderId: "1001",
+          customerId: validCustomerId,
+          orderItems: emptyOrderItems,
+        }),
+      ).toThrow(new Error("Order Items cannot be empty"));
     });
 
     it("should throw an error when order item has an invalid price", () => {
@@ -63,9 +79,13 @@ describe("Order", () => {
         },
       ];
 
-      expect(() => createOrder(validCustomerId, invalidOrderItems)).toThrow(
-        new Error("Item price must be a valid number"),
-      );
+      expect(() =>
+        makeSut({
+          orderId: "1001",
+          customerId: validCustomerId,
+          orderItems: invalidOrderItems,
+        }),
+      ).toThrow(new Error("Item price must be a valid number"));
     });
 
     it("should throw an error when order item has an invalid quantity", () => {
@@ -78,9 +98,13 @@ describe("Order", () => {
         },
       ];
 
-      expect(() => createOrder(validCustomerId, invalidOrderItems)).toThrow(
-        new Error("Item quantity must be a valid number"),
-      );
+      expect(() =>
+        makeSut({
+          orderId: "1001",
+          customerId: validCustomerId,
+          orderItems: invalidOrderItems,
+        }),
+      ).toThrow(new Error("Item quantity must be a valid number"));
     });
 
     it("should calculate subtotal correctly for multiple items", () => {
@@ -98,7 +122,11 @@ describe("Order", () => {
         },
       ];
 
-      const { order } = createOrder(validCustomerId, multipleOrderItems);
+      const { order } = makeSut({
+        orderId: "1001",
+        customerId: validCustomerId,
+        orderItems: multipleOrderItems,
+      });
 
       expect(order.subtotal).toBe(200);
     });
@@ -115,7 +143,11 @@ describe("Order", () => {
         },
       ];
 
-      const { order } = createOrder(validCustomerId, validOrderItems);
+      const { order } = makeSut({
+        orderId: "1001",
+        customerId: validCustomerId,
+        orderItems: validOrderItems,
+      });
 
       order.changeStatus("cancelled");
       expect(order.status).toBe("cancelled");
