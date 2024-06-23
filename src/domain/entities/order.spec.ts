@@ -30,7 +30,7 @@ describe("Order", () => {
     });
 
     it("should throw an error when providing an invalid Customer ID", () => {
-      const invalidCustomerId = null as any;
+      const invalidCustomerId = null as never;
       const validOrderItems = [
         {
           product: "new Product",
