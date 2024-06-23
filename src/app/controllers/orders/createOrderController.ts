@@ -12,11 +12,5 @@ export class CreateOrderController {
       clientId,
       orderItems
     })
-
-    console.log('Message sent into the queue')
-    // mqConnection.consume(rmqQueue, function (message: any) {
-    //   console.log("consume", { message });
-    //   // Ao consumir, deve salvar no MongoDB
-    // });
   }
 }

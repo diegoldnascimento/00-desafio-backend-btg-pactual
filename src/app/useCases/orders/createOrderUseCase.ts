@@ -27,5 +27,10 @@ export class CreateOrderUseCase {
     //   console.log("consume", { message });
     //   // Ao consumir, deve salvar no MongoDB
     // });
+    //
+    mqConnection.consume(rmqQueue, function (message: any) {
+      console.log("consume", { message });
+      // Ao consumir, deve salvar no MongoDB
+    });
   }
 }
