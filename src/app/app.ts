@@ -1,4 +1,4 @@
-import mqConnection from "src/infra/messaging/rabbitmq/rabbitMqConnectionAdapter";
+import rabbitMQService from "src/infra/messaging/rabbitmq/rabbitMqConnectionAdapter";
 import { CreateOrderController } from "./controllers/orders/createOrderController";
 import { bootstrap } from "./messaging/bootstrap";
 import { CreateOrderUseCase } from "./useCases/orders/createOrderUseCase";
@@ -26,11 +26,6 @@ const dummyHandleRequest = {
 
 const dummyHandleResponse = {};
 
-class OrdersMongoDbRepository {}
-
-const rabbitMQService = mqConnection;
-const ordersRepository = new OrdersMongoDbRepository();
-// const orderRepository = OrdersMongoDBRepository()
 const createOrderUseCase = new CreateOrderUseCase(rabbitMQService);
 
 new CreateOrderController(createOrderUseCase).handleRequest(

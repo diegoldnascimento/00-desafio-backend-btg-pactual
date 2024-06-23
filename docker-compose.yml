@@ -4,29 +4,48 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports: [3000:3000]
-    depends_on: [rabbitmq, mongodb]
-    volumes: [.:/usr/src/app]
-    environment: [NODE_ENV=development]
-    networks: [app-network]
+    ports:
+      - 3000:3000
+    depends_on:
+      - rabbitmq
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+
   rabbitmq:
     image: rabbitmq:3.9-management
     ports:
-      - 5672:5672  # AMQP protocol
-      - 15672:15672  # RabbitMQ management UI
+      - 5672:5672  # amqp protocol
+      - 15672:15672  # rabbitmq management ui
     volumes:
-      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf  # Mount custom configuration file
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf  # mount custom configuration file
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-    networks: [app-network]
+    networks:
+      - app-network
+
   mongodb:
     image: mongo:latest
-    ports: [27017:27017]
-    volumes: [mongodb_data:/data/db]
-    networks: [app-network]
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    networks:
+      - app-network
+    environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=admin
+    command: [--auth]
 networks:
   app-network:
     driver: bridge
+
 volumes:
   mongodb_data:
+
