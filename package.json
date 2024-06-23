@@ -16,5 +16,8 @@
     "tsx": "^4.15.7",
     "typescript": "^5.5.2",
     "ulid": "^2.3.0"
+  },
+  "dependencies": {
+    "mongodb": "^6.7.0"
   }
 }
