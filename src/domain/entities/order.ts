@@ -10,7 +10,7 @@ interface IOrder {
   id: string;
   orderId: string;
   customerId: string;
-  subtotal: number;
+  subtotal: string;
   orderItems: OrderItem[];
   status: "created" | "cancelled" | "refunded";
   createdAt: Date;
@@ -21,7 +21,7 @@ export class Order implements IOrder {
   readonly id: string;
   readonly orderId: string;
   readonly customerId: string;
-  readonly subtotal: number;
+  readonly subtotal: string;
   readonly orderItems: OrderItem[];
   readonly createdAt: Date;
   updatedAt: Date;
@@ -31,7 +31,7 @@ export class Order implements IOrder {
     id: string,
     orderId: string,
     customerId: string,
-    subtotal: number,
+    subtotal: string,
     items: OrderItem[],
     status: "created" | "cancelled" | "refunded",
     createdAt: Date,
@@ -47,7 +47,11 @@ export class Order implements IOrder {
     this.updatedAt = new Date(updatedAt.toISOString());
   }
 
-  static create(orderId: string, customerId: string, orderItems: OrderItem[]): Order {
+  static create(
+    orderId: string,
+    customerId: string,
+    orderItems: OrderItem[],
+  ): Order {
     if (!customerId) {
       throw new Error("Customer ID must have a valid value");
     }
@@ -72,14 +76,15 @@ export class Order implements IOrder {
     );
     const orderStatus = "created";
     const currentDate = new Date().toISOString();
+    const internalId = crypto.randomUUID();
 
     return new Order(
-      orderId,
+      internalId,
       orderId,
       customerId,
-      subtotal,
+      subtotal.toFixed(2),
       orderItems,
-      orderStatus as "created", // Set initial status as 'created'
+      orderStatus as "created",
       new Date(currentDate),
       new Date(currentDate),
     );
@@ -90,4 +95,3 @@ export class Order implements IOrder {
     this.updatedAt = new Date();
   }
 }
-

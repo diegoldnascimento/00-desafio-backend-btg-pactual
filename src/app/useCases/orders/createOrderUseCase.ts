@@ -1,5 +1,3 @@
-import { RabbitMQConnectionAdapter } from "src/infra/messaging/rabbitmq/rabbitMqConnectionAdapter";
-
 const rmqQueue = process.env.RABBIT_MQ_ORDER_V1_QUEUE_CREATED || "";
 
 interface Input {
@@ -8,11 +6,12 @@ interface Input {
   orderItems: [];
 }
 
-interface Output {}
+type Output = void;
 
 export class CreateOrderUseCase {
   constructor(private readonly queueService: MessagingQueueService) {}
-  async execute(input: Input) {
+
+  async execute(input: Input): Promise<Output> {
     const { orderId, clientId, orderItems } = input;
 
     const orderPayload = {
@@ -22,6 +21,5 @@ export class CreateOrderUseCase {
     };
 
     await this.queueService.produce(rmqQueue, orderPayload);
-
   }
 }
