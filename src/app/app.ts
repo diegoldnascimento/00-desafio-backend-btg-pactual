@@ -1,5 +1,7 @@
+import { MediatorImpl as Mediator } from "src/infra/mediator/mediator";
 import rabbitMQService from "src/infra/messaging/rabbitmq/rabbitMqConnectionAdapter";
 import { CreateOrderController } from "./controllers/orders/createOrderController";
+import { CreateOrderHandler } from "./handlers/order/createOrderHandler";
 import { bootstrap } from "./messaging/bootstrap";
 import { CreateOrderUseCase } from "./useCases/orders/createOrderUseCase";
 
@@ -28,18 +30,15 @@ const dummyHandleResponse = {};
 
 const createOrderUseCase = new CreateOrderUseCase(rabbitMQService);
 
-new CreateOrderController(createOrderUseCase).handleRequest(
+const mediator = new Mediator();
+const createOrderHandler = new CreateOrderHandler(mediator, createOrderUseCase);
+
+// Register handlers with mediator
+mediator.register('CreateOrderEvent', createOrderHandler);
+
+new CreateOrderController(mediator).handleRequest(
   dummyHandleRequest,
   dummyHandleResponse,
 );
 
 bootstrap();
-
-// (async () => {
-//   mqConnection.connect();
-//
-//   mqConnection.consume(rmqQueue, function (message: any) {
-//     console.log("consume", { message });
-//     // Ao consumir, deve salvar no MongoDB
-//   });
-// })();
