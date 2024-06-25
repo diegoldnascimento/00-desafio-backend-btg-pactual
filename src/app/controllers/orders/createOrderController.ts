@@ -1,13 +1,12 @@
 import { CreateOrderUseCase } from "src/app/useCases/orders/createOrderUseCase";
-import { Mediator } from "src/infra/mediator/mediator";
 
 export class CreateOrderController {
-  constructor(private readonly mediator: Mediator) {}
+  constructor(private readonly createOrderUseCase: CreateOrderUseCase) {}
+
   async handleRequest(request, response) {
     const { id: orderId, clientId, items: orderItems } = request.body;
 
-    this.mediator.publish({
-      name: "CreateOrderEvent",
+    this.createOrderUseCase.execute({
       orderId,
       clientId,
       orderItems,

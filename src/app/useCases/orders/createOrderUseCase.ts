@@ -2,11 +2,12 @@ import {
     CreateOrderInputDto,
     CreateOrderOutputDto,
 } from "src/app/dtos/useCases/orders/createOrderDto";
-
-const rmqQueue = process.env.RABBIT_MQ_ORDER_V1_QUEUE_CREATED || "";
+import { Mediator } from "src/infra/mediator/mediator";
 
 export class CreateOrderUseCase {
-  constructor(private readonly queueService: MessagingQueueService) {}
+  constructor(
+    private readonly mediator: Mediator,
+  ) {}
 
   async execute(input: CreateOrderInputDto): Promise<CreateOrderOutputDto> {
     const { orderId, clientId, orderItems } = input;
@@ -17,6 +18,9 @@ export class CreateOrderUseCase {
       items: orderItems,
     };
 
-    await this.queueService.produce(rmqQueue, orderPayload);
+    this.mediator.publish({
+      name: "CreateOrderEvent",
+      ...orderPayload,
+    });
   }
 }
