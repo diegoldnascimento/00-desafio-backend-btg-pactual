@@ -2,7 +2,8 @@ import {
     CreateOrderInputDto,
     CreateOrderOutputDto,
 } from "src/app/dtos/useCases/orders/createOrderDto";
-import { Mediator } from "src/infra/mediator/mediator";
+import { CreateOrderEvent } from "src/domain/events/order/CreateOrderEvent";
+import { Mediator } from "src/domain/mediator/mediator";
 
 export class CreateOrderUseCase {
   constructor(
@@ -12,15 +13,8 @@ export class CreateOrderUseCase {
   async execute(input: CreateOrderInputDto): Promise<CreateOrderOutputDto> {
     const { orderId, clientId, orderItems } = input;
 
-    const orderPayload = {
-      CodigoPedido: orderId,
-      codigoCliente: clientId,
-      items: orderItems,
-    };
-
-    this.mediator.publish({
-      name: "CreateOrderEvent",
-      ...orderPayload,
-    });
+    this.mediator.publish(
+      new CreateOrderEvent(orderId, clientId, orderItems, new Date())
+    );
   }
 }

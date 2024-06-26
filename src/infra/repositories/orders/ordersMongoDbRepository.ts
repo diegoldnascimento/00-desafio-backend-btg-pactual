@@ -11,9 +11,9 @@ export class OrdersMongoDBRepository implements OrderRepository {
     this.collection = db.collection('orders');
   }
 
-  async create(order: Order): Promise<void> {
+  async create(order: Order): Promise<any> {
     try {
-      await this.collection.insertOne(order);
+      return await this.collection.insertOne(order);
     } catch (error) {
       console.error("Error creating order:", error);
       throw error;

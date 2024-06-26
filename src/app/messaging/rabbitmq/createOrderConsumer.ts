@@ -40,13 +40,14 @@ export class CreateOrderV1Consumer {
         const message = JSON.parse(messageContent);
         console.log(`[x] Received message: ${messageContent}`);
         console.log({ message });
-        const { CodigoPedido, codigoCliente, items } = message;
 
-        const order = Order.create(CodigoPedido, codigoCliente, items);
+        const order = Order.create(message.orderId, message.clientId, message.orderItems);
 
         console.log({ order });
 
-        this.orderRepository.create(order);
+        const { insertedId } = await this.orderRepository.create(order);
+
+        console.log('Message created', insertedId)
         // Persist and save in memory
 
         // Process the message (e.g., save to database, perform business logic)

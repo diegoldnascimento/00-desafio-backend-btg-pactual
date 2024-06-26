@@ -3,7 +3,7 @@ import { CreateOrderUseCase } from "src/app/useCases/orders/createOrderUseCase";
 export class CreateOrderController {
   constructor(private readonly createOrderUseCase: CreateOrderUseCase) {}
 
-  async handleRequest(request, response) {
+  async handleRequest(request: any, response: any) {
     const { id: orderId, clientId, items: orderItems } = request.body;
 
     this.createOrderUseCase.execute({

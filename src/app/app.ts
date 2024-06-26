@@ -5,8 +5,6 @@ import { CreateOrderHandler } from "./handlers/order/createOrderHandler";
 import { bootstrap } from "./messaging/bootstrap";
 import { CreateOrderUseCase } from "./useCases/orders/createOrderUseCase";
 
-const rmqQueue = process?.env.RABBIT_MQ_ORDER_V1_QUEUE_CREATED || "";
-
 console.log("Oi! app.ts");
 
 const dummyHandleRequest = {
@@ -28,25 +26,29 @@ const dummyHandleRequest = {
   },
 };
 
-const dummyHandleResponse = {};
+(async () => {
+  await bootstrap();
 
-const mediator = new Mediator();
+  const dummyHandleResponse = {};
 
-const createOrderUseCase = new CreateOrderUseCase(mediator);
+  const mediator = new Mediator();
 
-const createOrderHandler = new CreateOrderHandler(rabbitMQService);
+  const createOrderUseCase = new CreateOrderUseCase(mediator);
 
-// Register handlers with mediator
-mediator.register("CreateOrderEvent", createOrderHandler);
-mediator.register("CreatedOrderEvent", function () {
-  console.log(
-    "After the order Created Order Event is sent, then persist somewhere...",
+  const createOrderHandler = new CreateOrderHandler(rabbitMQService);
+
+  // Register handlers with mediator
+  mediator.register("CreateOrderEvent", createOrderHandler);
+  mediator.register("CreatedOrderEvent", function () {
+    console.log(
+      "After the order Created Order Event is sent, then persist somewhere...",
+    );
+  });
+
+  new CreateOrderController(createOrderUseCase).handleRequest(
+    dummyHandleRequest,
+    dummyHandleResponse,
   );
-});
 
-new CreateOrderController(createOrderUseCase).handleRequest(
-  dummyHandleRequest,
-  dummyHandleResponse,
-);
 
-bootstrap();
+})();

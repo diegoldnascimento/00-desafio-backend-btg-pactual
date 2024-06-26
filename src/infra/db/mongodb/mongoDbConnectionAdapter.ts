@@ -22,12 +22,11 @@ export class MongoDBConnectionAdapter {
 
     try {
       console.log("⌛ Connecting to MongoDB Server...");
-      this.client = new MongoClient(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      console.log({uri})
+      this.client = new MongoClient(uri);
 
       await this.client.connect();
+      console.log("MongoDB Connected")
       this.db = this.client.db(dbName);
       this.connected = true;
       console.log("✅ MongoDB Connection is ready");
