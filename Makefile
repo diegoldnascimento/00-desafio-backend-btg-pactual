@@ -39,7 +39,12 @@ run: setup-db
 ## cleanup: removes MongoDB and associated volumes
 cleanup:
 	@ docker-compose down
-	@ docker volume rm $$(docker volume ls -q)
+	@ docker stop $$(docker ps -aq)
+	@ docker container rm -f $$(docker container ls -aq)
+	@ docker volume rm -f $$(docker volume ls -q)
+
+
+
 
 .PHONY: test
 ## test: runs unit tests

@@ -8,7 +8,7 @@ services:
       - 3000:3000
     depends_on:
       - rabbitmq
-      - mongodb
+      - mongo
     volumes:
       - .:/usr/src/app
     environment:
@@ -29,19 +29,32 @@ services:
     networks:
       - app-network
 
-  mongodb:
+  mongo:
     image: mongo:latest
     ports:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
     networks:
       - app-network
     environment:
-        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_USERNAME=root
         - MONGO_INITDB_ROOT_PASSWORD=admin
-    command: [--auth]
+        - MONGO_INITDB_DATABASE=btgPactual
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+        - ME_CONFIG_BASICAUTH_USERNAME=root
+        - ME_CONFIG_BASICAUTH_PASSWORD=admin
+        - ME_CONFIG_MONGODB_PORT=27017
+        - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+        - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+    links:
+      - mongo
+    networks:
+      - app-network
 networks:
   app-network:
     driver: bridge

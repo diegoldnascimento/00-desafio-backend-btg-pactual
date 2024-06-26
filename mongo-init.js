@@ -1,4 +1,4 @@
-db = db.getSiblingDB('myDatabase');
+db = db.getSiblingDB('btgPactual');
 db.createCollection('orders');
 
 
@@ -9,7 +9,7 @@ db.createUser({
     roles: [
       {
         role: 'dbOwner',
-      db: 'myDatabase',
+      db: 'btgPactual',
     },
   ],
 });
